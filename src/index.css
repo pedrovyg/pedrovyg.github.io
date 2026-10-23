@@ -146,9 +146,14 @@ body {
   right: 0;
   bottom: 0;
   width: clamp(380px, 38vw, 660px);
-  height: 88%;
+  aspect-ratio: 1;
+  height: auto;
+  max-height: 88%;
   overflow: hidden;
-  pointer-events: none;
+  pointer-events: auto;
+  transform: translate3d(var(--portrait-x, 0px), var(--portrait-y, 0px), 0);
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), filter 500ms ease;
+  will-change: transform;
 }
 
 /* Foto original: nenhuma alteração de cor, contraste ou nitidez. */
@@ -156,49 +161,24 @@ body {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 22%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: grayscale(1) contrast(1.03);
+  transition: filter 600ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 73%, rgba(0, 0, 0, 0.96) 84%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 73%, rgba(0, 0, 0, 0.96) 84%, transparent 100%);
 }
 
-/* Camada de ambiente separada: ilumina o fundo sem tocar na imagem. */
-.hero-portrait-glow {
-  position: absolute;
-  inset: -12% -6% -10% 0;
-  background: radial-gradient(
-    ellipse 70% 60% at 68% 58%,
-    rgba(74, 100, 142, 0.16),
-    transparent 70%
-  );
+@media (hover: hover) and (pointer: fine) {
+  .hero-portrait:hover .hero-portrait-img {
+    filter: grayscale(0) contrast(1.06) saturate(1.02);
+    transform: scale(1.012);
+  }
 }
 
 .hero-portrait-fade {
   position: absolute;
   pointer-events: none;
-}
-
-/* Borda esquerda: dissolve a foto no conteúdo. */
-.hero-portrait-fade--left {
-  inset: 0 0 0 0;
-  background: linear-gradient(
-    90deg,
-    #0b0b0d 0%,
-    rgba(11, 11, 13, 0.92) 9%,
-    rgba(11, 11, 13, 0.62) 22%,
-    rgba(11, 11, 13, 0.18) 40%,
-    transparent 62%
-  );
-}
-
-/* Borda superior: transição suave em direção ao topo do cartão. */
-.hero-portrait-fade--top {
-  inset: 0 0 55% 0;
-  background: linear-gradient(
-    180deg,
-    #0b0b0d 0%,
-    rgba(11, 11, 13, 0.68) 34%,
-    rgba(11, 11, 13, 0.2) 66%,
-    transparent 100%
-  );
 }
 
 /* Base: gradiente escuro da paleta, integrando a foto ao rodapé do cartão. */
@@ -217,43 +197,39 @@ body {
 @media (min-width: 768px) and (max-width: 1279px) {
   .hero-portrait {
     width: clamp(300px, 40vw, 440px);
-    height: 74%;
+    height: auto;
+    max-height: 74%;
   }
 
-  .hero-portrait-fade--left {
-    background: linear-gradient(
-      90deg,
-      #0b0b0d 0%,
-      rgba(11, 11, 13, 0.9) 10%,
-      rgba(11, 11, 13, 0.5) 26%,
-      transparent 60%
-    );
-  }
 }
 
 @media (max-width: 767px) {
   .hero-portrait {
     right: -6%;
     width: clamp(150px, 46vw, 250px);
-    height: 38%;
-  }
-
-  .hero-portrait-fade--left {
-    background: linear-gradient(
-      90deg,
-      #0b0b0d 0%,
-      rgba(11, 11, 13, 0.8) 14%,
-      rgba(11, 11, 13, 0.24) 38%,
-      transparent 68%
-    );
-  }
-
-  .hero-portrait-fade--top {
-    inset: 0 0 40% 0;
+    height: auto;
+    max-height: 38%;
   }
 
   .hero-portrait-fade--bottom {
     inset: 44% 0 0 0;
+  }
+
+  .hero-portrait {
+    transform: none;
+    transition: none;
+  }
+
+  .hero-portrait-img {
+    filter: grayscale(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-portrait,
+  .hero-portrait-img {
+    transform: none;
+    transition: none;
   }
 }
 

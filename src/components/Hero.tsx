@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import portraitImage from "../../assets/pedro-vygotsky.jpg";
+import { useEffect, useRef, useState } from "react";
+import portraitImage from "../../assets/pedro-vygotsky-transparent.png";
 import { HERO_TAGS, SOCIALS } from "../data/content";
 import { useHeroAnimation } from "../hooks/useHeroAnimation";
 import { ArrowRightIcon, ChevronDownIcon, GitHubIcon } from "./icons";
@@ -14,6 +14,38 @@ export default function Hero() {
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const metaRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const portrait = portraitRef.current;
+    if (!portrait || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    let frame = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    const render = () => {
+      currentX += (targetX - currentX) * 0.1;
+      currentY += (targetY - currentY) * 0.1;
+      portrait.style.setProperty("--portrait-x", `${currentX.toFixed(2)}px`);
+      portrait.style.setProperty("--portrait-y", `${currentY.toFixed(2)}px`);
+      frame = requestAnimationFrame(render);
+    };
+    const handleMove = (event: PointerEvent) => {
+      const bounds = portrait.getBoundingClientRect();
+      targetX = ((event.clientX - bounds.left) / bounds.width - 0.5) * 12;
+      targetY = ((event.clientY - bounds.top) / bounds.height - 0.5) * 10;
+    };
+    const reset = () => { targetX = 0; targetY = 0; };
+    portrait.addEventListener("pointermove", handleMove);
+    portrait.addEventListener("pointerleave", reset);
+    frame = requestAnimationFrame(render);
+    return () => {
+      cancelAnimationFrame(frame);
+      portrait.removeEventListener("pointermove", handleMove);
+      portrait.removeEventListener("pointerleave", reset);
+    };
+  }, []);
 
   useHeroAnimation({
     section: sectionRef,
@@ -49,8 +81,7 @@ export default function Hero() {
           />
 
           {!portraitUnavailable && (
-            <div className="hero-portrait" aria-hidden="true">
-              <div className="hero-portrait-glow" />
+            <div ref={portraitRef} className="hero-portrait" aria-hidden="true">
               <img
                 src={portraitImage}
                 alt=""
@@ -62,8 +93,6 @@ export default function Hero() {
                 className="hero-portrait-img"
                 onError={() => setPortraitUnavailable(true)}
               />
-              <div className="hero-portrait-fade hero-portrait-fade--left" />
-              <div className="hero-portrait-fade hero-portrait-fade--top" />
               <div className="hero-portrait-fade hero-portrait-fade--bottom" />
             </div>
           )}
@@ -89,7 +118,7 @@ export default function Hero() {
                 ref={subtitleRef}
                 className="mt-6 w-full max-w-[620px] text-[15px] leading-relaxed text-[#9a9aa2] sm:mt-7 sm:text-base md:text-[17px]"
               >
-                👋 Olá, eu sou Pedro Vygotsky
+                👨‍💻 Olá, eu sou Pedro.
               </p>
 
               <div ref={metaRef} className="mt-8 w-full sm:mt-9">
