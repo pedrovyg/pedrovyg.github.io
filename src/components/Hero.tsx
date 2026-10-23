@@ -18,34 +18,68 @@ export default function Hero() {
 
   useEffect(() => {
     const portrait = portraitRef.current;
-    if (!portrait || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    if (!portrait) return;
+
+    const canMove = window.matchMedia(
+      "(min-width: 768px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
+    );
     let frame = 0;
     let targetX = 0;
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
+
     const render = () => {
-      currentX += (targetX - currentX) * 0.1;
-      currentY += (targetY - currentY) * 0.1;
+      currentX += (targetX - currentX) * 0.18;
+      currentY += (targetY - currentY) * 0.18;
+      if (Math.abs(targetX - currentX) < 0.05 && Math.abs(targetY - currentY) < 0.05) {
+        currentX = targetX;
+        currentY = targetY;
+      }
       portrait.style.setProperty("--portrait-x", `${currentX.toFixed(2)}px`);
       portrait.style.setProperty("--portrait-y", `${currentY.toFixed(2)}px`);
-      frame = requestAnimationFrame(render);
+      frame = currentX === targetX && currentY === targetY ? 0 : requestAnimationFrame(render);
     };
+
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(render);
+    };
+
     const handleMove = (event: PointerEvent) => {
+      if (!canMove.matches) return;
       const bounds = portrait.getBoundingClientRect();
-      targetX = ((event.clientX - bounds.left) / bounds.width - 0.5) * 12;
-      targetY = ((event.clientY - bounds.top) / bounds.height - 0.5) * 10;
+      targetX = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width - 0.5) * 2)) * 8;
+      targetY = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height - 0.5) * 2)) * 6;
+      schedule();
     };
-    const reset = () => { targetX = 0; targetY = 0; };
+
+    const reset = () => {
+      targetX = 0;
+      targetY = 0;
+      if (canMove.matches) {
+        schedule();
+      } else {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        currentX = 0;
+        currentY = 0;
+        portrait.style.removeProperty("--portrait-x");
+        portrait.style.removeProperty("--portrait-y");
+      }
+    };
+
     portrait.addEventListener("pointermove", handleMove);
     portrait.addEventListener("pointerleave", reset);
-    frame = requestAnimationFrame(render);
+    portrait.addEventListener("pointercancel", reset);
+    canMove.addEventListener("change", reset);
     return () => {
       cancelAnimationFrame(frame);
       portrait.removeEventListener("pointermove", handleMove);
       portrait.removeEventListener("pointerleave", reset);
+      portrait.removeEventListener("pointercancel", reset);
+      canMove.removeEventListener("change", reset);
     };
-  }, []);
+  }, [portraitUnavailable]);
 
   useHeroAnimation({
     section: sectionRef,
@@ -81,10 +115,10 @@ export default function Hero() {
           />
 
           {!portraitUnavailable && (
-            <div ref={portraitRef} className="hero-portrait" aria-hidden="true">
+            <div ref={portraitRef} className="hero-portrait">
               <img
                 src={portraitImage}
-                alt=""
+                alt="Retrato de Pedro Vygotsky"
                 width="1250"
                 height="1250"
                 loading="eager"
@@ -93,11 +127,11 @@ export default function Hero() {
                 className="hero-portrait-img"
                 onError={() => setPortraitUnavailable(true)}
               />
-              <div className="hero-portrait-fade hero-portrait-fade--bottom" />
+              <div className="hero-portrait-fade hero-portrait-fade--bottom" aria-hidden="true" />
             </div>
           )}
 
-          <div className="relative z-10 flex min-h-full w-full flex-1 flex-col px-5 pb-8 pt-10 sm:px-8 sm:pb-10 sm:pt-14 md:px-10 lg:px-14 xl:px-16 2xl:px-20 lg:pt-[72px] lg:pb-12">
+          <div className="hero-content relative z-10 flex min-h-full w-full flex-1 flex-col px-5 pb-8 pt-10 sm:px-8 sm:pb-10 sm:pt-14 md:px-10 lg:px-14 xl:px-16 2xl:px-20 lg:pt-[72px] lg:pb-12">
             <div ref={contentRef} className="w-full">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-[#141416]/90 px-3.5 py-[7px]">
                 <span className="available-dot" aria-hidden="true" />
