@@ -1,0 +1,19 @@
+# System
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Temporary
+*.log
+
+# Dependencies and generated output
+node_modules/
+dist/
+
+# Local environment
+.env
+.env.*
+!.env.example

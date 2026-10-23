@@ -1,0 +1,675 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-page: #050505;
+  --color-surface: #0c0c0e;
+  --color-elevated: #121214;
+  --color-ink: #f4f4f5;
+  --color-muted: #8b8b90;
+  --color-dim: #5c5c62;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-line-strong: rgba(255, 255, 255, 0.14);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: #050505;
+  color: #f4f4f5;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100svh;
+  background: #050505;
+}
+
+::selection {
+  background: #f4f4f5;
+  color: #050505;
+}
+
+:focus-visible {
+  outline: 2px solid #f4f4f5;
+  outline-offset: 3px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2e;
+  border-radius: 999px;
+  border: 2px solid #050505;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a40;
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.058) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.058) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: center center;
+  transform: scale(1.08);
+  will-change: transform;
+}
+
+.hero-vignette {
+  background:
+    radial-gradient(
+      ellipse 80% 62% at 28% 36%,
+      rgba(90, 90, 110, 0.16) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 100% 100% at 50% 50%,
+      transparent 42%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+}
+
+.hero-title {
+  font-weight: 800;
+  letter-spacing: -0.065em;
+}
+
+.hero-title-primary,
+.hero-title-secondary {
+  display: block;
+}
+
+.hero-title-primary {
+  color: #f6f6f7;
+  font-size: clamp(2rem, 5vw, 6.15rem);
+  line-height: 0.98;
+}
+
+.hero-title-secondary {
+  margin-top: 0.02em;
+  margin-left: clamp(0px, 1.2vw, 20px);
+  color: #afb1bb;
+  font-size: clamp(2.15rem, 5.7vw, 6.65rem);
+  letter-spacing: -0.077em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+@media (max-width: 767px) {
+  .hero-title-primary {
+    font-size: clamp(1.9rem, 8.4vw, 3.35rem);
+  }
+
+  .hero-title-secondary {
+    margin-top: 0.14em;
+    margin-left: 0;
+    font-size: clamp(2.1rem, 9.2vw, 3.65rem);
+    line-height: 0.99;
+  }
+}
+
+.hero-portrait {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  width: clamp(380px, 38vw, 660px);
+  height: 88%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Foto original: nenhuma alteração de cor, contraste ou nitidez. */
+.hero-portrait-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+}
+
+/* Camada de ambiente separada: ilumina o fundo sem tocar na imagem. */
+.hero-portrait-glow {
+  position: absolute;
+  inset: -12% -6% -10% 0;
+  background: radial-gradient(
+    ellipse 70% 60% at 68% 58%,
+    rgba(74, 100, 142, 0.16),
+    transparent 70%
+  );
+}
+
+.hero-portrait-fade {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Borda esquerda: dissolve a foto no conteúdo. */
+.hero-portrait-fade--left {
+  inset: 0 0 0 0;
+  background: linear-gradient(
+    90deg,
+    #0b0b0d 0%,
+    rgba(11, 11, 13, 0.92) 9%,
+    rgba(11, 11, 13, 0.62) 22%,
+    rgba(11, 11, 13, 0.18) 40%,
+    transparent 62%
+  );
+}
+
+/* Borda superior: transição suave em direção ao topo do cartão. */
+.hero-portrait-fade--top {
+  inset: 0 0 55% 0;
+  background: linear-gradient(
+    180deg,
+    #0b0b0d 0%,
+    rgba(11, 11, 13, 0.68) 34%,
+    rgba(11, 11, 13, 0.2) 66%,
+    transparent 100%
+  );
+}
+
+/* Base: gradiente escuro da paleta, integrando a foto ao rodapé do cartão. */
+.hero-portrait-fade--bottom {
+  inset: 52% 0 0 0;
+  background: linear-gradient(
+    0deg,
+    #0b0b0d 0%,
+    rgba(11, 11, 13, 0.86) 12%,
+    rgba(11, 11, 13, 0.44) 34%,
+    rgba(11, 11, 13, 0.12) 60%,
+    transparent 100%
+  );
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .hero-portrait {
+    width: clamp(300px, 40vw, 440px);
+    height: 74%;
+  }
+
+  .hero-portrait-fade--left {
+    background: linear-gradient(
+      90deg,
+      #0b0b0d 0%,
+      rgba(11, 11, 13, 0.9) 10%,
+      rgba(11, 11, 13, 0.5) 26%,
+      transparent 60%
+    );
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-portrait {
+    right: -6%;
+    width: clamp(150px, 46vw, 250px);
+    height: 38%;
+  }
+
+  .hero-portrait-fade--left {
+    background: linear-gradient(
+      90deg,
+      #0b0b0d 0%,
+      rgba(11, 11, 13, 0.8) 14%,
+      rgba(11, 11, 13, 0.24) 38%,
+      transparent 68%
+    );
+  }
+
+  .hero-portrait-fade--top {
+    inset: 0 0 40% 0;
+  }
+
+  .hero-portrait-fade--bottom {
+    inset: 44% 0 0 0;
+  }
+}
+
+.about-title {
+  font-weight: 800;
+  letter-spacing: -0.06em;
+}
+
+.about-title-primary,
+.about-title-secondary {
+  display: inline;
+}
+
+.about-title-primary {
+  color: #f6f6f7;
+  font-size: clamp(2rem, 5vw, 5.2rem);
+  line-height: 0.98;
+}
+
+.about-title-secondary {
+  color: #afb1bb;
+  font-size: clamp(2rem, 5vw, 5.2rem);
+  line-height: 0.98;
+}
+
+@media (max-width: 767px) {
+  .about-title-primary,
+  .about-title-secondary {
+    display: block;
+    font-size: clamp(1.9rem, 8.4vw, 3.35rem);
+  }
+
+  .about-title-secondary {
+    margin-top: 0.04em;
+  }
+}
+
+.section-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a8a90;
+}
+
+.contact-card {
+  display: flex;
+  min-width: 0;
+  min-height: 178px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 24px;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  background: var(--color-surface);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 240ms ease,
+    border-color 240ms ease,
+    background-color 240ms ease,
+    box-shadow 240ms ease;
+}
+
+.contact-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.contact-card-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--color-line);
+  border-radius: 9px;
+  background: #0a0a0c;
+  color: #a5a5b1;
+  transition: border-color 240ms ease, color 240ms ease;
+}
+
+.contact-card-arrow {
+  flex-shrink: 0;
+  color: #93939f;
+  transition: transform 240ms ease, color 240ms ease;
+}
+
+.contact-card-title {
+  color: #ededf0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.035em;
+}
+
+.contact-card-username {
+  margin-top: 4px;
+  color: #9a9aa6;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.contact-card:focus-visible {
+  outline: 2px solid #ededf0;
+  outline-offset: 4px;
+  border-color: rgba(255, 255, 255, 0.24);
+  background: #111114;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.18);
+    background: #111114;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 26px rgba(129, 140, 248, 0.05);
+  }
+
+  .contact-card:hover .contact-card-icon {
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #ededf0;
+  }
+
+  .contact-card:hover .contact-card-arrow {
+    transform: translate(2px, -2px);
+    color: #ededf0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-card,
+  .contact-card-icon,
+  .contact-card-arrow {
+    transition: none;
+  }
+
+  .contact-card:hover,
+  .contact-card:hover .contact-card-arrow {
+    transform: none;
+  }
+}
+
+/* ---- CTAs da Hero: base compartilhada ---- */
+.hero-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    filter 220ms ease;
+}
+
+.hero-cta-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-cta-arrow {
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-cta:focus-visible {
+  outline: 2px solid #f4f4f5;
+  outline-offset: 3px;
+}
+
+/* CTA principal: superfície clara com profundidade e pulsação discreta.
+   A pulsação anima apenas brilho e halo — nunca `transform` —, pois
+   animações CSS sobrepõem declarações normais e anulariam o hover/clique. */
+.hero-cta--primary {
+  background: linear-gradient(180deg, #ffffff 0%, #ededf0 100%);
+  color: #09090b;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 6px 18px rgba(0, 0, 0, 0.45);
+  animation: hero-cta-glow 3.6s ease-in-out infinite;
+}
+
+/* Halo da pulsação: expande atrás do botão, sem deslocar o layout. */
+.hero-cta--primary::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  z-index: -1;
+  border-radius: 13px;
+  background: radial-gradient(
+    62% 72% at 50% 50%,
+    rgba(255, 255, 255, 0.3),
+    transparent 72%
+  );
+  opacity: 0;
+  animation: hero-cta-halo 3.6s ease-in-out infinite;
+}
+
+@keyframes hero-cta-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.85) inset,
+      0 6px 18px rgba(0, 0, 0, 0.45);
+  }
+  50% {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.92) inset,
+      0 8px 24px rgba(0, 0, 0, 0.5),
+      0 0 20px rgba(255, 255, 255, 0.18);
+  }
+}
+
+@keyframes hero-cta-halo {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+/* CTA secundário: mantém a superfície escura da identidade visual. */
+.hero-cta--secondary {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #141416;
+  color: #f4f4f5;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* `animation: none` (em vez de pausar) para que o brilho do hover
+     não seja sobreposto pelos keyframes de box-shadow. */
+  .hero-cta--primary:hover {
+    animation: none;
+    transform: scale(1.03) translateY(-1px);
+    filter: brightness(1.04);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 10px 28px rgba(0, 0, 0, 0.55),
+      0 0 24px rgba(255, 255, 255, 0.2);
+  }
+
+  .hero-cta--primary:hover::before {
+    animation: none;
+    opacity: 1;
+    transform: scale(1.03);
+  }
+
+  .hero-cta--secondary:hover {
+    transform: scale(1.03) translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.22);
+    background: #1a1a1e;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.07) inset,
+      0 10px 26px rgba(0, 0, 0, 0.5),
+      0 0 20px rgba(129, 140, 248, 0.1);
+  }
+
+  .hero-cta:hover .hero-cta-arrow {
+    transform: translateX(3px);
+  }
+}
+
+/* Clique: recuo curto para dar sensação de botão físico. */
+.hero-cta:active {
+  transform: scale(0.975);
+  transition-duration: 90ms;
+}
+
+.hero-cta--primary:active {
+  animation: none;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+.hero-cta--primary:active::before {
+  animation: none;
+  opacity: 0.6;
+}
+
+.hero-cta--secondary:active {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 3px 10px rgba(0, 0, 0, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta,
+  .hero-cta-arrow {
+    transition: none;
+  }
+
+  .hero-cta--primary,
+  .hero-cta--primary::before {
+    animation: none;
+  }
+
+  .hero-cta--primary::before {
+    opacity: 0;
+  }
+
+  .hero-cta:hover,
+  .hero-cta:active {
+    transform: none;
+  }
+
+  .hero-cta:hover .hero-cta-arrow {
+    transform: none;
+  }
+}
+
+/* Indicador "disponível": núcleo verde + onda que se expande a cada pulso. */
+.available-dot {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+}
+
+.available-dot::before,
+.available-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: #22c55e;
+}
+
+/* Onda: nasce no núcleo e se dissipa enquanto se expande. */
+.available-dot::before {
+  opacity: 0;
+  animation: available-dot-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Núcleo: acende com brilho no instante em que cada onda é emitida. */
+.available-dot::after {
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+  animation: available-dot-core 2s ease-in-out infinite;
+}
+
+@keyframes available-dot-ping {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  75%,
+  100% {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+
+@keyframes available-dot-core {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1.1);
+    background-color: #4ade80;
+    box-shadow: 0 0 10px 2px rgba(74, 222, 128, 0.75);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.9);
+    background-color: #22c55e;
+    box-shadow: 0 0 3px rgba(34, 197, 94, 0.35);
+  }
+}
+
+@keyframes hint-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+.scroll-chevron {
+  animation: hint-bounce 1.8s ease-in-out infinite;
+}
+
+.viewport-height {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .available-dot::before,
+  .available-dot::after,
+  .scroll-chevron {
+    animation: none;
+  }
+}
